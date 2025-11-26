@@ -275,7 +275,7 @@ class UserService:
                     **SqlalchemyUtil.serialize_result(query_user.get('user_basic_info')),
                     post_ids=post_ids,
                     role_ids=role_ids,
-                    dept=SqlalchemyUtil.serialize_result(query_user.get('user_dept_info')),
+                    dept=SqlalchemyUtil.serialize_result(query_user.get('')),
                     role=SqlalchemyUtil.serialize_result(query_user.get('user_role_info')),
                 ),
                 post_ids=post_ids_list,

@@ -6,5 +6,6 @@ from . import (
     notice,  # noqa: F401
     post,  # noqa: F401
     role,  # noqa: F401
+    topic_category,  # noqa: F401
     user,  # noqa: F401
 )
