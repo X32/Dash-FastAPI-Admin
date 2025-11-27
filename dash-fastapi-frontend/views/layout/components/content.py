@@ -37,7 +37,7 @@ def render_main_content():
                         ],
                         id='tabs-container',
                         type='editable-card',
-                        defaultActiveKey='Index/',
+                        # defaultActiveKey='首页',
                         style={
                             'width': '100%',
                             'paddingLeft': '15px',

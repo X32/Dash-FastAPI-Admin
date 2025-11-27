@@ -90,15 +90,6 @@ def router(pathname, url_trigger, session_token):
                 )
 
             else:
-                # Handle root path
-                if pathname == '/':
-                    return dict(
-                        app_mount=no_update,
-                        redirect_container=None,
-                        current_pathname=pathname,
-                        router_list=no_update,
-                        search_panel_data=no_update,
-                    )
                 return dict(
                     app_mount=no_update,
                     redirect_container=None,
