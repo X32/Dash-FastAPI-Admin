@@ -268,7 +268,6 @@ def render(*args, **kwargs):
                                             fac.AntdFormItem(
                                                 fac.AntdTreeSelect(
                                                     id='dept-tree-select',
-                                                    name='parent_id',
                                                     placeholder='请选择上级部门',
                                                     treeData=[],
                                                     treeNodeFilterProp='title',
@@ -297,12 +296,11 @@ def render(*args, **kwargs):
                                 fac.AntdCol(
                                     fac.AntdFormItem(
                                         fac.AntdInput(
-                                            name='dept_name',
-                                            placeholder='请输入部门名称',
-                                            allowClear=True,
-                                            style={'width': '100%'},
-                                        ),
-                                        label='部门名称',
+                                                placeholder='请输入部门名称',
+                                                allowClear=True,
+                                                style={'width': '100%'},
+                                            ),
+                                            label='部门名称',
                                         required=True,
                                         id={
                                             'type': 'dept-form-label',
@@ -315,11 +313,10 @@ def render(*args, **kwargs):
                                 fac.AntdCol(
                                     fac.AntdFormItem(
                                         fac.AntdInputNumber(
-                                            name='order_num',
-                                            min=0,
-                                            style={'width': '100%'},
-                                        ),
-                                        label='显示顺序',
+                                                min=0,
+                                                style={'width': '100%'},
+                                            ),
+                                            label='显示顺序',
                                         required=True,
                                         id={
                                             'type': 'dept-form-label',
@@ -337,12 +334,11 @@ def render(*args, **kwargs):
                                 fac.AntdCol(
                                     fac.AntdFormItem(
                                         fac.AntdInput(
-                                            name='leader',
-                                            placeholder='请输入负责人',
-                                            allowClear=True,
-                                            style={'width': '100%'},
-                                        ),
-                                        label='负责人',
+                                                placeholder='请输入负责人',
+                                                allowClear=True,
+                                                style={'width': '100%'},
+                                            ),
+                                            label='负责人',
                                         id={
                                             'type': 'dept-form-label',
                                             'index': 'leader',
@@ -354,12 +350,11 @@ def render(*args, **kwargs):
                                 fac.AntdCol(
                                     fac.AntdFormItem(
                                         fac.AntdInput(
-                                            name='phone',
-                                            placeholder='请输入联系电话',
-                                            allowClear=True,
-                                            style={'width': '100%'},
-                                        ),
-                                        label='联系电话',
+                                                placeholder='请输入联系电话',
+                                                allowClear=True,
+                                                style={'width': '100%'},
+                                            ),
+                                            label='联系电话',
                                         id={
                                             'type': 'dept-form-label',
                                             'index': 'phone',
@@ -376,12 +371,11 @@ def render(*args, **kwargs):
                                 fac.AntdCol(
                                     fac.AntdFormItem(
                                         fac.AntdInput(
-                                            name='email',
-                                            placeholder='请输入邮箱',
-                                            allowClear=True,
-                                            style={'width': '100%'},
-                                        ),
-                                        label='邮箱',
+                                                placeholder='请输入邮箱',
+                                                allowClear=True,
+                                                style={'width': '100%'},
+                                            ),
+                                            label='邮箱',
                                         id={
                                             'type': 'dept-form-label',
                                             'index': 'email',
@@ -394,7 +388,6 @@ def render(*args, **kwargs):
                                     fac.AntdFormItem(
                                         ApiRadioGroup(
                                             dict_type='sys_normal_disable',
-                                            name='status',
                                             defaultValue='0',
                                             style={'width': '100%'},
                                         ),

@@ -9,7 +9,6 @@ class ApiSelect(AntdSelect):
         self,
         dict_type: str,
         id: Optional[Union[str, Dict]] = str(uuid4()),
-        key: Optional[str] = None,
         style: Optional[Dict] = None,
         className: Optional[Union[str, Dict]] = None,
         popupClassName: Optional[str] = None,
@@ -62,7 +61,6 @@ class ApiSelect(AntdSelect):
         self.options = DictManager.get_dict_options(dict_type=dict_type)[0]
         super().__init__(
             id=id,
-            key=key,
             style=style,
             className=className,
             popupClassName=popupClassName,

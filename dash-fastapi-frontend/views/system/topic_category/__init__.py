@@ -106,7 +106,7 @@ def render(*args, **kwargs):
                                                 style={
                                                     'display': 'none'
                                                 }
-                                            ) if permission_manager.check_permission('system:topicCategory:add') else None,
+                                            ) if permission_manager.check_perms('system:topicCategory:add') else None,
                                             fac.AntdButton(
                                                 [
                                                     fac.AntdIcon(
@@ -118,7 +118,7 @@ def render(*args, **kwargs):
                                                 style={
                                                     'display': 'none'
                                                 }
-                                            ) if permission_manager.check_permission('system:topicCategory:remove') else None,
+                                            ) if permission_manager.check_perms('system:topicCategory:remove') else None,
                                         ],
                                         style={
                                             'paddingBottom': '10px'
@@ -153,7 +153,7 @@ def render(*args, **kwargs):
                                                 'dataIndex': 'status',
                                                 'key': 'status',
                                                 'renderOptions': {
-                                                    'renderType': 'renderSwitch',
+                                                    'renderType': 'switch',
                                                     'props': {
                                                         'checkedChildren': '正常',
                                                         'unCheckedChildren': '停用'
@@ -177,7 +177,7 @@ def render(*args, **kwargs):
                                                 'fixed': 'right',
                                                 'width': 150,
                                                 'renderOptions': {
-                                                    'renderType': 'renderButton',
+                                                    'renderType': 'button',
                                                     'props': {
                                                         'buttons': [
                                                             {
@@ -186,26 +186,24 @@ def render(*args, **kwargs):
                                                                 'type': 'primary',
                                                                 'id': 'topic-category-edit',
                                                                 'display': 'none'
-                                                            } if permission_manager.check_permission('system:topicCategory:edit') else None,
+                                                            } if permission_manager.check_perms('system:topicCategory:edit') else None,
                                                             {
                                                                 'content': '删除',
                                                                 'icon': 'antd-delete',
                                                                 'id': 'topic-category-delete-single',
                                                                 'display': 'none'
-                                                            } if permission_manager.check_permission('system:topicCategory:remove') else None,
+                                                            } if permission_manager.check_perms('system:topicCategory:remove') else None,
                                                         ]
                                                     }
                                                 }
                                             }
                                         ],
                                         data=[],
-                                        rowKey='category_id',
                                         bordered=True,
                                         pagination={
+                                            'showSizeChanger': True,
+                                            'showQuickJumper': True,
                                             'pageSizeOptions': ['10', '20', '50', '100']
-                                        },
-                                        scroll={
-                                            'x': 'max-content'
                                         },
                                         style={
                                             'width': '100%'
@@ -237,12 +235,12 @@ def render(*args, **kwargs):
                                 treeData=[],
                                 treeDefaultExpandAll=True,
                                 allowClear=True,
+                                treeNodeFilterProp='title',
                                 style={
                                     'width': '100%'
                                 }
                             ),
-                            label='父分类',
-                            name='parent_id'
+                            label='父分类'
                         ),
                         fac.AntdFormItem(
                             fac.AntdInput(
@@ -255,21 +253,18 @@ def render(*args, **kwargs):
                                 }
                             ),
                             label='分类名称',
-                            name='category_name',
                             required=True
                         ),
                         fac.AntdFormItem(
                             fac.AntdInputNumber(
                                 id='topic-category-order_num-input-modal',
                                 placeholder='请输入排序',
-                                allowClear=True,
                                 style={
                                     'width': '100%'
                                 },
                                 min=0
                             ),
-                            label='排序',
-                            name='order_num'
+                            label='排序'
                         ),
                         fac.AntdFormItem(
                             ApiRadioGroup(
@@ -279,8 +274,7 @@ def render(*args, **kwargs):
                                     'width': '100%'
                                 }
                             ),
-                            label='状态',
-                            name='status'
+                            label='状态'
                         )
                     ],
                     id='topic-category-form',

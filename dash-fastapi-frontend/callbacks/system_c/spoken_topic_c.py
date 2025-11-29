@@ -59,9 +59,9 @@ def generate_spoken_topic_table(query_params: Dict):
         spoken_topic_table_pagination=Output(
             'spoken-topic-list-table', 'pagination', allow_duplicate=True
         ),
-        spoken_topic_table_key=Output('spoken-topic-list-table', 'key'),
+        spoken_topic_table_key=Output('spoken-topic-list-table', 'key', allow_duplicate=True),
         spoken_topic_table_selectedrowkeys=Output(
-            'spoken-topic-list-table', 'selectedRowKeys'
+            'spoken-topic-list-table', 'selectedRowKeys', allow_duplicate=True
         ),
     ),
     inputs=dict(
@@ -164,8 +164,8 @@ def open_spoken_topic_modal(add_click, edit_click, table_selected_rows):
 
 @app.callback(
     output=dict(
-        spoken_topic_modal_visible=Output('spoken-topic-modal', 'visible'),
-        spoken_topic_table_key=Output('spoken-topic-list-table', 'key'),
+        spoken_topic_modal_visible=Output('spoken-topic-modal', 'visible', allow_duplicate=True),
+        spoken_topic_table_key=Output('spoken-topic-list-table', 'key', allow_duplicate=True),
     ),
     inputs=dict(
         confirm_click=Input('spoken-topic-confirm', 'nClicks'),
@@ -229,7 +229,7 @@ def save_spoken_topic(confirm_click, cancel_click, modal_type, form_data):
 @app.callback(
     output=dict(
         spoken_topic_delete_ids=Output('spoken-topic-delete-ids-store', 'data'),
-        spoken_topic_delete_modal_visible=Output('spoken-topic-delete-modal', 'visible'),
+        spoken_topic_delete_modal_visible=Output('spoken-topic-delete-modal', 'visible', allow_duplicate=True),
     ),
     inputs=dict(
         delete_click=Input('spoken-topic-delete', 'nClicks'),
@@ -260,8 +260,8 @@ def open_spoken_topic_delete_modal(delete_click, operation_delete_click, table_s
 
 @app.callback(
     output=dict(
-        spoken_topic_delete_modal_visible=Output('spoken-topic-delete-modal', 'visible'),
-        spoken_topic_table_key=Output('spoken-topic-list-table', 'key'),
+        spoken_topic_delete_modal_visible=Output('spoken-topic-delete-modal', 'visible', allow_duplicate=True),
+        spoken_topic_table_key=Output('spoken-topic-list-table', 'key', allow_duplicate=True),
     ),
     inputs=dict(
         delete_confirm_click=Input('spoken-topic-delete-confirm', 'nClicks'),

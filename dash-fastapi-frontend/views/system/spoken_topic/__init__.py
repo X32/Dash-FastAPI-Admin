@@ -115,7 +115,7 @@ def render(*args, **kwargs):
                                                 style={
                                                     'display': 'none'
                                                 }
-                                            ) if permission_manager.check_permission('system:spokenTopic:add') else None,
+                                            ) if permission_manager.check_perms('system:spokenTopic:add') else None,
                                             fac.AntdButton(
                                                 [
                                                     fac.AntdIcon(
@@ -127,7 +127,7 @@ def render(*args, **kwargs):
                                                 style={
                                                     'display': 'none'
                                                 }
-                                            ) if permission_manager.check_permission('system:spokenTopic:remove') else None,
+                                            ) if permission_manager.check_perms('system:spokenTopic:remove') else None,
                                         ],
                                         style={
                                             'paddingBottom': '10px'
@@ -195,13 +195,13 @@ def render(*args, **kwargs):
                                                                 'type': 'primary',
                                                                 'id': 'spoken-topic-edit',
                                                                 'display': 'none'
-                                                            } if permission_manager.check_permission('system:spokenTopic:edit') else None,
+                                                            } if permission_manager.check_perms('system:spokenTopic:edit') else None,
                                                             {
                                                                 'content': '删除',
                                                                 'icon': 'antd-delete',
                                                                 'id': 'spoken-topic-delete-single',
                                                                 'display': 'none'
-                                                            } if permission_manager.check_permission('system:spokenTopic:remove') else None,
+                                                            } if permission_manager.check_perms('system:spokenTopic:remove') else None,
                                                         ]
                                                     }
                                                 }
@@ -248,7 +248,6 @@ def render(*args, **kwargs):
                                 }
                             ),
                             label='分类',
-                            name='category_id',
                             required=True
                         ),
                         fac.AntdFormItem(
@@ -262,7 +261,6 @@ def render(*args, **kwargs):
                                 }
                             ),
                             label='话题名称',
-                            name='topic_name',
                             required=True
                         ),
                         fac.AntdFormItem(
@@ -275,8 +273,7 @@ def render(*args, **kwargs):
                                 },
                                 min=0
                             ),
-                            label='排序',
-                            name='order_num'
+                            label='排序'
                         ),
                         fac.AntdFormItem(
                             ApiRadioGroup(
@@ -286,8 +283,7 @@ def render(*args, **kwargs):
                                     'width': '100%'
                                 }
                             ),
-                            label='状态',
-                            name='status'
+                            label='状态'
                         )
                     ],
                     id='spoken-topic-form',

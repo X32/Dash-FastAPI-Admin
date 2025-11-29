@@ -59,9 +59,9 @@ def generate_topic_category_table(query_params: Dict):
         topic_category_table_pagination=Output(
             'topic-category-list-table', 'pagination', allow_duplicate=True
         ),
-        topic_category_table_key=Output('topic-category-list-table', 'key'),
+        topic_category_table_key=Output('topic-category-list-table', 'key', allow_duplicate=True),
         topic_category_table_selectedrowkeys=Output(
-            'topic-category-list-table', 'selectedRowKeys'
+            'topic-category-list-table', 'selectedRowKeys', allow_duplicate=True
         ),
     ),
     inputs=dict(
@@ -161,8 +161,8 @@ def open_topic_category_modal(add_click, edit_click, table_selected_rows):
 
 @app.callback(
     output=dict(
-        topic_category_modal_visible=Output('topic-category-modal', 'visible'),
-        topic_category_table_key=Output('topic-category-list-table', 'key'),
+        topic_category_modal_visible=Output('topic-category-modal', 'visible', allow_duplicate=True),
+        topic_category_table_key=Output('topic-category-list-table', 'key', allow_duplicate=True),
     ),
     inputs=dict(
         confirm_click=Input('topic-category-confirm', 'nClicks'),
@@ -222,7 +222,7 @@ def save_topic_category(confirm_click, cancel_click, modal_type, form_data):
 @app.callback(
     output=dict(
         topic_category_delete_ids=Output('topic-category-delete-ids-store', 'data'),
-        topic_category_delete_modal_visible=Output('topic-category-delete-modal', 'visible'),
+        topic_category_delete_modal_visible=Output('topic-category-delete-modal', 'visible', allow_duplicate=True),
     ),
     inputs=dict(
         delete_click=Input('topic-category-delete', 'nClicks'),
@@ -253,8 +253,8 @@ def open_topic_category_delete_modal(delete_click, operation_delete_click, table
 
 @app.callback(
     output=dict(
-        topic_category_delete_modal_visible=Output('topic-category-delete-modal', 'visible'),
-        topic_category_table_key=Output('topic-category-list-table', 'key'),
+        topic_category_delete_modal_visible=Output('topic-category-delete-modal', 'visible', allow_duplicate=True),
+        topic_category_table_key=Output('topic-category-list-table', 'key', allow_duplicate=True),
     ),
     inputs=dict(
         delete_confirm_click=Input('topic-category-delete-confirm', 'nClicks'),

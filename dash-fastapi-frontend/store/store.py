@@ -15,5 +15,7 @@ def render_store_container():
             dcc.Store(id='current-pathname-container'),
             # 路由列表存储容器
             dcc.Store(id='router-list-container'),
+            # 确保所有在回调中使用的store容器都被正确定义
+            dcc.Store(id='search-panel-data-container'),
         ]
     )

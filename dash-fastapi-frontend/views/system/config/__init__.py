@@ -378,7 +378,6 @@ def render(*args, **kwargs):
                                 fac.AntdCol(
                                     fac.AntdFormItem(
                                         fac.AntdInput(
-                                            name='config_name',
                                             placeholder='请输入参数名称',
                                             allowClear=True,
                                             style={'width': 350},
@@ -400,7 +399,6 @@ def render(*args, **kwargs):
                                 fac.AntdCol(
                                     fac.AntdFormItem(
                                         fac.AntdInput(
-                                            name='config_key',
                                             placeholder='请输入参数键名',
                                             allowClear=True,
                                             style={'width': 350},
@@ -422,7 +420,6 @@ def render(*args, **kwargs):
                                 fac.AntdCol(
                                     fac.AntdFormItem(
                                         fac.AntdInput(
-                                            name='config_value',
                                             placeholder='请输入参数键值',
                                             allowClear=True,
                                             style={'width': 350},
@@ -445,7 +442,6 @@ def render(*args, **kwargs):
                                     fac.AntdFormItem(
                                         ApiRadioGroup(
                                             dict_type='sys_yes_no',
-                                            name='config_type',
                                             defaultValue='Y',
                                             style={'width': 350},
                                         ),
@@ -465,7 +461,6 @@ def render(*args, **kwargs):
                                 fac.AntdCol(
                                     fac.AntdFormItem(
                                         fac.AntdInput(
-                                            name='remark',
                                             placeholder='请输入内容',
                                             allowClear=True,
                                             mode='text-area',

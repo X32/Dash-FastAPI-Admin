@@ -43,19 +43,19 @@ create table sys_spoken_topic (
 -- 初始化菜单数据
 -- ----------------------------
 -- 二级菜单：话题分类管理
-insert ignore into sys_menu values('1018', '话题分类管理', '1',   '9', 'topicCategory', 'system.topicCategory', '', '', 1, 0, 'C', '0', '0', 'system:topicCategory:list', 'antd-book', 'admin', sysdate(), '', null, '话题分类管理菜单');
+insert ignore into sys_menu values('118', '话题分类管理', '1',   '9', 'topicCategory', 'system.topicCategory', '', '', 1, 0, 'C', '0', '0', 'system:topicCategory:list', 'antd-book', 'admin', sysdate(), '', null, '话题分类管理菜单');
 
 -- 话题分类管理按钮
-insert ignore into sys_menu values('1020', '分类查询', '1018', '1',  '', '', '', '', 1, 0, 'F', '0', '0', 'system:topicCategory:query', '#', 'admin', sysdate(), '', null, '');
-insert ignore into sys_menu values('1021', '分类新增', '1018', '2',  '', '', '', '', 1, 0, 'F', '0', '0', 'system:topicCategory:add', '#', 'admin', sysdate(), '', null, '');
-insert ignore into sys_menu values('1022', '分类修改', '1018', '3',  '', '', '', '', 1, 0, 'F', '0', '0', 'system:topicCategory:edit', '#', 'admin', sysdate(), '', null, '');
-insert ignore into sys_menu values('1023', '分类删除', '1018', '4',  '', '', '', '', 1, 0, 'F', '0', '0', 'system:topicCategory:remove', '#', 'admin', sysdate(), '', null, '');
+insert ignore into sys_menu values('1100', '分类查询', '118', '1',  '', '', '', '', 1, 0, 'F', '0', '0', 'system:topicCategory:query', '#', 'admin', sysdate(), '', null, '');
+insert ignore into sys_menu values('1101', '分类新增', '118', '2',  '', '', '', '', 1, 0, 'F', '0', '0', 'system:topicCategory:add', '#', 'admin', sysdate(), '', null, '');
+insert ignore into sys_menu values('1102', '分类修改', '118', '3',  '', '', '', '', 1, 0, 'F', '0', '0', 'system:topicCategory:edit', '#', 'admin', sysdate(), '', null, '');
+insert ignore into sys_menu values('1103', '分类删除', '118', '4',  '', '', '', '', 1, 0, 'F', '0', '0', 'system:topicCategory:remove', '#', 'admin', sysdate(), '', null, '');
 
 -- 二级菜单：话题管理
-insert ignore into sys_menu values('1019', '话题管理', '1',   '10', 'spokenTopic', 'system.spokenTopic', '', '', 1, 0, 'C', '0', '0', 'system:spokenTopic:list', 'antd-file-text', 'admin', sysdate(), '', null, '话题管理菜单');
+insert ignore into sys_menu values('119', '话题管理', '1',   '10', 'spokenTopic', 'system.spokenTopic', '', '', 1, 0, 'C', '0', '0', 'system:spokenTopic:list', 'antd-file-text', 'admin', sysdate(), '', null, '话题管理菜单');
 
 -- 话题管理按钮
-insert ignore into sys_menu values('1024', '话题查询', '1019', '1',  '', '', '', '', 1, 0, 'F', '0', '0', 'system:spokenTopic:query', '#', 'admin', sysdate(), '', null, '');
-insert ignore into sys_menu values('1025', '话题新增', '1019', '2',  '', '', '', '', 1, 0, 'F', '0', '0', 'system:spokenTopic:add', '#', 'admin', sysdate(), '', null, '');
-insert ignore into sys_menu values('1026', '话题修改', '1019', '3',  '', '', '', '', 1, 0, 'F', '0', '0', 'system:spokenTopic:edit', '#', 'admin', sysdate(), '', null, '');
-insert ignore into sys_menu values('1027', '话题删除', '1019', '4',  '', '', '', '', 1, 0, 'F', '0', '0', 'system:spokenTopic:remove', '#', 'admin', sysdate(), '', null, '');
+insert ignore into sys_menu values('1104', '话题查询', '119', '1',  '', '', '', '', 1, 0, 'F', '0', '0', 'system:spokenTopic:query', '#', 'admin', sysdate(), '', null, '');
+insert ignore into sys_menu values('1105', '话题新增', '119', '2',  '', '', '', '', 1, 0, 'F', '0', '0', 'system:spokenTopic:add', '#', 'admin', sysdate(), '', null, '');
+insert ignore into sys_menu values('1106', '话题修改', '119', '3',  '', '', '', '', 1, 0, 'F', '0', '0', 'system:spokenTopic:edit', '#', 'admin', sysdate(), '', null, '');
+insert ignore into sys_menu values('1107', '话题删除', '119', '4',  '', '', '', '', 1, 0, 'F', '0', '0', 'system:spokenTopic:remove', '#', 'admin', sysdate(), '', null, '');
