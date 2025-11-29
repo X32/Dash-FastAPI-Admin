@@ -8,6 +8,7 @@ MySQL数据库操作工具类
 
 @author: AI Assistant
 @created: 2024-12-29
+@updated: 2024-12-29 - 集成通用连接池功能
 """
 
 import os
@@ -21,20 +22,27 @@ from pymysql.connections import Connection
 from pymysql.cursors import DictCursor
 from pymysql.err import OperationalError, ProgrammingError, IntegrityError
 
+# 导入连接池模块
+from connection_pool import ConnectionPool, ConnectionPoolError, get_pooled_connection
+
 
 class MySqlTool:
-    """MySQL数据库操作工具类"""
+    """MySQL数据库操作工具类 - 集成通用连接池功能"""
     
-    def __init__(self, config_path: Optional[str] = None, use_pool: bool = True):
+    def __init__(self, config_path: Optional[str] = None, use_pool: bool = True, pool_config: Optional[Dict[str, Any]] = None, use_pool_singleton: bool = False):
         """
         初始化MySQL工具类
         
         Args:
             config_path: 配置文件路径，如果为None则使用默认路径
             use_pool: 是否使用连接池
+            pool_config: 连接池配置参数，如果为None则使用默认配置
+            use_pool_singleton: 是否使用连接池单例模式（仅在use_pool=True时有效）
         """
         self.config_path = config_path or self._get_default_config_path()
         self.use_pool = use_pool
+        self.pool_config = pool_config or {}
+        self.use_pool_singleton = use_pool_singleton
         self.config = {}
         self.connection = None
         self.logger = self._setup_logger()
@@ -44,6 +52,7 @@ class MySqlTool:
         
         # 连接池相关
         self._pool = None
+        self._pool_instance = None
         if use_pool:
             self._init_pool()
     
@@ -157,8 +166,9 @@ class MySqlTool:
         }
     
     def _init_pool(self) -> None:
-        """初始化连接池"""
+        """初始化连接池 - 使用通用连接池类"""
         try:
+            # 构建连接池配置
             pool_config = {
                 'host': self.config['host'],
                 'port': self.config['port'],
@@ -171,22 +181,49 @@ class MySqlTool:
                 'connect_timeout': self.config['connect_timeout']
             }
             
-            # 存储连接配置，后续复用
-            self._pool = pool_config
-            self.logger.info("连接池配置初始化成功")
+            # 合并用户提供的连接池配置
+            pool_config.update(self.pool_config)
             
+            # 根据是否使用单例模式创建连接池实例
+            if self.use_pool_singleton:
+                self._pool_instance = ConnectionPool.get_instance(pool_config)
+                self.logger.info("使用单例模式初始化连接池")
+            else:
+                self._pool_instance = ConnectionPool(pool_config)
+                self.logger.info("使用普通模式初始化连接池")
+            
+            self._pool = pool_config  # 保持向后兼容性
+            
+            self.logger.info("通用连接池初始化成功")
+            self.logger.info(f"连接池配置: {self._pool_instance.get_pool_status()}")
+            
+        except ConnectionPoolError as e:
+            self.logger.error(f"连接池初始化失败: {str(e)}")
+            raise
         except Exception as e:
             self.logger.error(f"连接池初始化失败: {str(e)}")
             raise
     
     @contextmanager
-    def get_connection(self):
-        """获取数据库连接的上下文管理器"""
+    def get_connection(self, timeout: Optional[float] = None):
+        """
+        获取数据库连接的上下文管理器
+        
+        Args:
+            timeout: 获取连接的超时时间（秒），仅在使用连接池时有效
+        """
         conn = None
+        pooled_conn = None
         try:
-            if self.use_pool and self._pool:
+            if self.use_pool and self._pool_instance:
+                # 使用通用连接池
+                pooled_conn = self._pool_instance.get_connection(timeout)
+                conn = pooled_conn.get_raw_connection()
+            elif self.use_pool and self._pool:
+                # 向后兼容：使用传统方式
                 conn = pymysql.connect(**self._pool)
             else:
+                # 不使用连接池
                 conn = pymysql.connect(
                     host=self.config['host'],
                     port=self.config['port'],
@@ -201,24 +238,42 @@ class MySqlTool:
             
             yield conn
             
+        except ConnectionPoolError as e:
+            self.logger.error(f"连接池错误: {str(e)}")
+            raise
         except OperationalError as e:
             self.logger.error(f"数据库连接失败: {str(e)}")
             raise
         finally:
-            if conn:
+            if pooled_conn:
+                # 使用连接池时，归还连接到池中
+                pooled_conn.close()
+            elif conn and not self.use_pool:
+                # 不使用连接池时，直接关闭连接
                 conn.close()
     
-    def connect(self) -> Connection:
+    def connect(self, timeout: Optional[float] = None) -> Connection:
         """
         建立数据库连接
         
+        Args:
+            timeout: 获取连接的超时时间（秒），仅在使用连接池时有效
+            
         Returns:
             pymysql.Connection: 数据库连接对象
         """
         try:
-            if self.use_pool and self._pool:
+            if self.use_pool and self._pool_instance:
+                # 使用通用连接池获取连接
+                pooled_conn = self._pool_instance.get_connection(timeout)
+                self.connection = pooled_conn.get_raw_connection()
+                # 存储pooled_conn以便后续归还
+                self._current_pooled_conn = pooled_conn
+            elif self.use_pool and self._pool:
+                # 向后兼容：使用传统方式
                 self.connection = pymysql.connect(**self._pool)
             else:
+                # 不使用连接池
                 self.connection = pymysql.connect(
                     host=self.config['host'],
                     port=self.config['port'],
@@ -234,6 +289,9 @@ class MySqlTool:
             self.logger.info("数据库连接成功")
             return self.connection
             
+        except ConnectionPoolError as e:
+            self.logger.error(f"连接池错误: {str(e)}")
+            raise
         except OperationalError as e:
             self.logger.error(f"数据库连接失败: {str(e)}")
             raise
@@ -242,11 +300,42 @@ class MySqlTool:
         """关闭数据库连接"""
         if self.connection:
             try:
-                self.connection.close()
+                # 如果使用连接池，归还连接到池中
+                if hasattr(self, '_current_pooled_conn') and self._current_pooled_conn:
+                    self._current_pooled_conn.close()
+                    self._current_pooled_conn = None
+                else:
+                    # 传统方式，直接关闭连接
+                    self.connection.close()
+                
                 self.connection = None
                 self.logger.info("数据库连接已关闭")
             except Exception as e:
                 self.logger.error(f"关闭连接时出错: {str(e)}")
+    
+    def get_pool_status(self) -> Optional[Dict[str, Any]]:
+        """
+        获取连接池状态信息
+        
+        Returns:
+            Dict: 连接池状态信息，如果未使用连接池则返回None
+        """
+        if self.use_pool and self._pool_instance:
+            return self._pool_instance.get_pool_status()
+        return None
+    
+    def close_pool(self) -> None:
+        """
+        关闭连接池
+        注意：关闭后无法重新打开，需要重新创建MySqlTool实例
+        """
+        if self._pool_instance:
+            try:
+                self._pool_instance.close()
+                self.logger.info("连接池已关闭")
+            except Exception as e:
+                self.logger.error(f"关闭连接池时出错: {str(e)}")
+                raise
     
     def __enter__(self):
         """上下文管理器入口"""
@@ -634,18 +723,139 @@ class MySqlTool:
 
 # 使用示例和测试代码
 if __name__ == "__main__":
-    # 创建工具类实例
+    print("=== MySqlTool 使用示例 ===\n")
+    
+    # 示例1: 传统连接方式（不使用连接池）
+    print("1. 传统连接方式（不使用连接池）:")
     try:
-        # 使用默认配置文件
         db_tool = MySqlTool()
-        
-        # 获取所有表
         tables = db_tool.get_tables()
-        print(f"数据库中的表: {tables}")
+        print(f"   数据库中的表数量: {len(tables)}")
+        db_tool.close()
+    except Exception as e:
+        print(f"   错误: {str(e)}")
+    
+    # 示例2: 使用连接池（普通模式）
+    print("\n2. 使用连接池（普通模式）:")
+    try:
+        # 连接池配置
+        pool_config = {
+            'max_connections': 10,
+            'min_idle_connections': 3,
+            'max_idle_connections': 5,
+            'idle_timeout': 300,
+            'connect_timeout': 10,
+            'retry_times': 3,
+            'blocking': True,
+            'wait_timeout': 30
+        }
         
-        # 如果存在表，查看表结构
-        if tables:
-            db_tool.print_table_structure(tables[0])
+        db_tool = MySqlTool(pool_config=pool_config, use_pool_singleton=False)
+        
+        # 获取连接池状态
+        pool_status = db_tool.get_pool_status()
+        if pool_status:
+            print(f"   连接池状态: 总连接数={pool_status['total_connections']}, "
+                  f"活跃连接数={pool_status['active_connections']}, "
+                  f"空闲连接数={pool_status['idle_connections']}")
+        
+        # 执行查询
+        tables = db_tool.get_tables()
+        print(f"   数据库中的表数量: {len(tables)}")
+        
+        # 演示连接复用（连接池会自动复用连接）
+        for i in range(3):
+            result = db_tool.execute_sql("SELECT 1")
+            print(f"   第{i+1}次查询: {result}")
+        
+        # 关闭连接池
+        db_tool.close_pool()
         
     except Exception as e:
-        print(f"错误: {str(e)}")
+        print(f"   错误: {str(e)}")
+    
+    # 示例3: 使用连接池（单例模式）
+    print("\n3. 使用连接池（单例模式）:")
+    try:
+        # 连接池配置
+        pool_config = {
+            'max_connections': 5,
+            'min_idle_connections': 2,
+            'max_idle_connections': 3,
+            'idle_timeout': 300
+        }
+        
+        # 创建第一个实例（使用单例模式）
+        db_tool1 = MySqlTool(pool_config=pool_config, use_pool_singleton=True)
+        print(f"   实例1 ID: {id(db_tool1._pool_instance)}")
+        
+        # 创建第二个实例（使用单例模式）
+        db_tool2 = MySqlTool(pool_config=pool_config, use_pool_singleton=True)
+        print(f"   实例2 ID: {id(db_tool2._pool_instance)}")
+        
+        # 验证是否为同一实例
+        print(f"   是否为同一连接池实例: {db_tool1._pool_instance is db_tool2._pool_instance}")
+        
+        # 使用第一个实例执行查询
+        tables1 = db_tool1.get_tables()
+        print(f"   实例1查询 - 数据库中的表数量: {len(tables1)}")
+        
+        # 使用第二个实例执行查询
+        tables2 = db_tool2.get_tables()
+        print(f"   实例2查询 - 数据库中的表数量: {len(tables2)}")
+        
+        # 关闭连接池（只需要关闭一个，因为是单例）
+        db_tool1.close_pool()
+        
+    except Exception as e:
+        print(f"   错误: {str(e)}")
+    
+    # 示例4: 上下文管理器（自动管理连接）
+    print("\n4. 上下文管理器（自动管理连接）:")
+    try:
+        with MySqlTool(pool_config={'max_connections': 5}) as db_tool:
+            tables = db_tool.get_tables()
+            print(f"   数据库中的表数量: {len(tables)}")
+            # 连接会在退出上下文时自动归还到池中
+    except Exception as e:
+        print(f"   错误: {str(e)}")
+    
+    # 示例5: 多线程测试连接池（单例模式）
+    print("\n5. 多线程测试连接池（单例模式）:")
+    import threading
+    import time
+    
+    def worker(thread_id):
+        try:
+            # 每个线程都创建一个新的MySqlTool实例，但使用同一个连接池单例
+            db_tool = MySqlTool(use_pool_singleton=True)
+            result = db_tool.execute_sql("SELECT 1")
+            pool_status = db_tool.get_pool_status()
+            print(f"   线程{thread_id}: 查询成功，连接池状态={pool_status['active_connections']}/{pool_status['total_connections']}, "
+                  f"连接池实例ID={id(db_tool._pool_instance)}")
+        except Exception as e:
+            print(f"   线程{thread_id}: 错误 - {str(e)}")
+    
+    try:
+        # 重置连接池单例（用于演示）
+        from connection_pool import ConnectionPool
+        ConnectionPool.reset_instance()
+        
+        threads = []
+        
+        # 启动10个线程，测试连接池并发处理
+        for i in range(10):
+            thread = threading.Thread(target=worker, args=(i,))
+            threads.append(thread)
+            thread.start()
+        
+        # 等待所有线程完成
+        for thread in threads:
+            thread.join()
+        
+        print(f"   所有线程使用的都是同一个连接池单例实例")
+        
+    except Exception as e:
+        print(f"   错误: {str(e)}")
+    
+    print("\n=== 示例完成 ===")
