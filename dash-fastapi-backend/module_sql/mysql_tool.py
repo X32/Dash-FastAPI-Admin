@@ -22,16 +22,20 @@ from pymysql.cursors import DictCursor
 from pymysql.err import OperationalError, ProgrammingError, IntegrityError
 
 
+from connection_pool import ConnectionPool, ConnectionPoolError
+
+
 class MySqlTool:
     """MySQL数据库操作工具类"""
     
-    def __init__(self, config_path: Optional[str] = None, use_pool: bool = True):
+    def __init__(self, config_path: Optional[str] = None, use_pool: bool = True, pool_config: Optional[Dict[str, Any]] = None):
         """
         初始化MySQL工具类
         
         Args:
             config_path: 配置文件路径，如果为None则使用默认路径
             use_pool: 是否使用连接池
+            pool_config: 连接池配置参数
         """
         self.config_path = config_path or self._get_default_config_path()
         self.use_pool = use_pool
@@ -45,7 +49,7 @@ class MySqlTool:
         # 连接池相关
         self._pool = None
         if use_pool:
-            self._init_pool()
+            self._init_pool(pool_config or {})
     
     def _setup_logger(self) -> logging.Logger:
         """设置日志配置"""
@@ -156,10 +160,11 @@ class MySqlTool:
             'autocommit': os.getenv('MYSQL_AUTOCOMMIT', 'true').lower() == 'true'
         }
     
-    def _init_pool(self) -> None:
+    def _init_pool(self, pool_config: Dict[str, Any]) -> None:
         """初始化连接池"""
         try:
-            pool_config = {
+            # 构建数据库连接配置
+            db_config = {
                 'host': self.config['host'],
                 'port': self.config['port'],
                 'user': self.config['user'],
@@ -167,13 +172,19 @@ class MySqlTool:
                 'database': self.config['database'],
                 'charset': self.config['charset'],
                 'cursorclass': DictCursor,
-                'autocommit': self.config['autocommit'],
-                'connect_timeout': self.config['connect_timeout']
+                'autocommit': self.config['autocommit']
             }
             
-            # 存储连接配置，后续复用
-            self._pool = pool_config
-            self.logger.info("连接池配置初始化成功")
+            # 合并连接池配置
+            pool_params = {
+                'config': db_config,
+                'connect_timeout': self.config['connect_timeout'],
+                **pool_config
+            }
+            
+            # 创建连接池实例
+            self._pool = ConnectionPool(**pool_params)
+            self.logger.info("连接池初始化成功")
             
         except Exception as e:
             self.logger.error(f"连接池初始化失败: {str(e)}")
@@ -185,7 +196,7 @@ class MySqlTool:
         conn = None
         try:
             if self.use_pool and self._pool:
-                conn = pymysql.connect(**self._pool)
+                conn = self._pool.get_connection()
             else:
                 conn = pymysql.connect(
                     host=self.config['host'],
@@ -201,12 +212,15 @@ class MySqlTool:
             
             yield conn
             
-        except OperationalError as e:
+        except (OperationalError, ConnectionPoolError) as e:
             self.logger.error(f"数据库连接失败: {str(e)}")
             raise
         finally:
             if conn:
-                conn.close()
+                if self.use_pool and self._pool:
+                    self._pool.release_connection(conn)
+                else:
+                    conn.close()
     
     def connect(self) -> Connection:
         """
@@ -217,7 +231,7 @@ class MySqlTool:
         """
         try:
             if self.use_pool and self._pool:
-                self.connection = pymysql.connect(**self._pool)
+                self.connection = self._pool.get_connection()
             else:
                 self.connection = pymysql.connect(
                     host=self.config['host'],
@@ -234,19 +248,29 @@ class MySqlTool:
             self.logger.info("数据库连接成功")
             return self.connection
             
-        except OperationalError as e:
+        except (OperationalError, ConnectionPoolError) as e:
             self.logger.error(f"数据库连接失败: {str(e)}")
             raise
     
     def close(self) -> None:
-        """关闭数据库连接"""
+        """关闭数据库连接和连接池"""
+        # 关闭当前连接
         if self.connection:
             try:
                 self.connection.close()
                 self.connection = None
-                self.logger.info("数据库连接已关闭")
+                self.logger.debug("当前数据库连接已关闭")
             except Exception as e:
-                self.logger.error(f"关闭连接时出错: {str(e)}")
+                self.logger.error(f"关闭当前连接时出错: {str(e)}")
+        
+        # 关闭连接池
+        if self._pool:
+            try:
+                self._pool.close()
+                self._pool = None
+                self.logger.info("连接池已关闭")
+            except Exception as e:
+                self.logger.error(f"关闭连接池时出错: {str(e)}")
     
     def __enter__(self):
         """上下文管理器入口"""
@@ -255,6 +279,18 @@ class MySqlTool:
     def __exit__(self, exc_type, exc_val, exc_tb):
         """上下文管理器出口"""
         self.close()
+
+    def get_pool_status(self) -> Optional[Dict[str, int]]:
+        """
+        获取连接池状态（仅当使用连接池时有效）
+
+        Returns:
+            Optional[Dict]: 连接池状态信息，使用连接池时返回，否则返回None
+        """
+        if self.use_pool and self._pool:
+            return self._pool.get_pool_status()
+        else:
+            return None
     
     def get_tables(self, database: Optional[str] = None) -> List[str]:
         """
