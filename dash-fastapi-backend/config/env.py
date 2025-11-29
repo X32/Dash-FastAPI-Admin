@@ -16,7 +16,7 @@ class AppSettings(BaseSettings):
     app_name: str = 'Dash-FasAPI-Admin'
     app_root_path: str = '/dev-api'
     app_host: str = '0.0.0.0'
-    app_port: int = 9099
+    app_port: int = 9019
     app_version: str = '2.0.0'
     app_reload: bool = True
     app_ip_location_query: bool = True
