@@ -25,6 +25,7 @@ from module_admin.controller.user_controller import userController
 from sub_applications.handle import handle_sub_applications
 from utils.common_util import worship
 from utils.log_util import logger
+from module_conversation.register import register_conversation_module
 
 
 # 生命周期事件
@@ -81,3 +82,6 @@ controller_list = [
 
 for controller in controller_list:
     app.include_router(router=controller.get('router'), tags=controller.get('tags'))
+
+# 注册会话管理模块
+register_conversation_module(app, prefix="/api/v1")
