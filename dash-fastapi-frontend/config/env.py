@@ -12,7 +12,7 @@ class AppSettings(BaseSettings):
 
     app_env: str = 'dev'
     app_name: str = 'DF Admin'
-    app_base_url: str = 'http://127.0.0.1:9019'
+    app_base_url: str = 'http://127.0.0.1:9089'
     app_proxy_path: str = '/dev-api'
     app_is_proxy: bool = False
     app_secret_key: str = 'Dash-FastAPI-Admin'
