@@ -12,7 +12,7 @@ from module_conversation.exception.conversation_exception import ConversationExc
 from config.get_db import get_db
 
 
-router = APIRouter(prefix="/conversations", tags=["会话管理"])
+router = APIRouter(tags=["会话管理"])
 conversation_service = ConversationService()
 message_service = MessageService()
 

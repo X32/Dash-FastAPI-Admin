@@ -150,6 +150,7 @@ class ConnectionPool:
         self._active_connections: Set[PooledConnection] = set()  # 活跃连接集合
         self._pool_lock = threading.RLock()            # 线程锁
         self._closed = False                           # 连接池是否已关闭
+        self._shutdown_event = threading.Event()       # 关闭事件信号
         self._total_created = 0                        # 总创建连接数
         self._total_destroyed = 0                    # 总销毁连接数
         
@@ -544,7 +545,10 @@ class ConnectionPool:
         
         while not self._closed:
             try:
-                time.sleep(self.config['health_check_interval'])
+                # 使用Event.wait替代time.sleep，支持即时唤醒
+                if self._shutdown_event.wait(timeout=self.config['health_check_interval']):
+                    # 事件被设置，表示需要关闭
+                    break
                 
                 if self._closed:
                     break
@@ -553,6 +557,8 @@ class ConnectionPool:
                 
             except Exception as e:
                 self.logger.error(f"健康检查异常: {str(e)}")
+        
+        self.logger.info("健康检查线程已退出")
     
     def _perform_health_check(self) -> None:
         """执行健康检查"""
@@ -635,6 +641,8 @@ class ConnectionPool:
         
         self.logger.info("开始关闭连接池")
         self._closed = True
+        # 设置关闭事件，唤醒健康检查线程
+        self._shutdown_event.set()
         
         timeout = timeout or self.config['wait_timeout']
         start_time = time.time()
