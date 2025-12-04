@@ -18,7 +18,7 @@ echo ""
 
 # 1. 获取会话列表
 echo -e "${GREEN}1. 获取会话列表${NC}"
-curl -X GET "$BASE_URL/conversations?user_id=$USER_ID" \
+curl -X GET "$BASE_URL/conversations/list?user_id=$USER_ID" \
   -H "Content-Type: application/json"
 echo -e "\n\n"
 
