@@ -26,6 +26,7 @@ from sub_applications.handle import handle_sub_applications
 from utils.common_util import worship
 from utils.log_util import logger
 from module_conversation.register import register_conversation_module
+from spoken_classification.register import register_topic_classification_module
 
 
 # 生命周期事件
@@ -85,3 +86,5 @@ for controller in controller_list:
 
 # 注册会话管理模块
 register_conversation_module(app, prefix="/api/v1")
+# 注册话题分类管理模块
+register_topic_classification_module(app)

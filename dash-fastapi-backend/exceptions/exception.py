@@ -56,3 +56,13 @@ class ModelValidatorException(Exception):
     def __init__(self, data: str = None, message: str = None):
         self.data = data
         self.message = message
+
+
+class BusinessException(Exception):
+    """
+    自定义业务异常BusinessException
+    """
+
+    def __init__(self, data: str = None, message: str = None):
+        self.data = data
+        self.message = message
