@@ -23,9 +23,6 @@ from utils.feedback_util import MessageManager
         password_form_help=Output('login-password-form-item', 'help'),
         captcha_form_help=Output('login-captcha-form-item', 'help'),
         token=Output('token-container', 'data'),
-        redirect_container=Output(
-            'redirect-container', 'children', allow_duplicate=True
-        ),
         login_success=Output('login-success-container', 'data'),
     ),
     inputs=dict(
@@ -79,9 +76,6 @@ def login_auth(
                 password_form_help=None,
                 captcha_form_help=None,
                 token=token,
-                redirect_container=dcc.Location(
-                    pathname='/', id='login-redirect'
-                ),
                 login_success={'timestamp': time.time()},
             )
 
@@ -105,7 +99,6 @@ def login_auth(
             if ValidateUtil.not_empty(input_captcha)
             else '请输入验证码！',
             token=None,
-            redirect_container=None,
             login_success=None,
         )
 
@@ -117,7 +110,6 @@ def login_auth(
         password_form_help=no_update,
         captcha_form_help=no_update,
         token=no_update,
-        redirect_container=no_update,
         login_success=None,
     )
 
@@ -219,6 +211,8 @@ app.clientside_callback(
                 Cookies.remove("password");
                 Cookies.remove("remember");
             }
+            // 登录成功后跳转到首页
+            window.location.href = '/';
         } else {
             throw window.dash_clientside.PreventUpdate;
         }

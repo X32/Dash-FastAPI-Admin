@@ -66,7 +66,7 @@ def render():
                                                             placeholder='请输入密码',
                                                             id='login-password',
                                                             mode='password',
-                                                            passwordUseMd5=True,
+                                                            passwordUseMd5=False,
                                                             size='large',
                                                             prefix=fac.AntdIcon(
                                                                 icon='antd-lock'
