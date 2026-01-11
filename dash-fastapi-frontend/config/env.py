@@ -12,12 +12,12 @@ class AppSettings(BaseSettings):
 
     app_env: str = 'dev'
     app_name: str = 'DF Admin'
-    app_base_url: str = 'http://127.0.0.1:9099'
+    app_base_url: str = 'http://127.0.0.1:9089'
     app_proxy_path: str = '/dev-api'
     app_is_proxy: bool = False
     app_secret_key: str = 'Dash-FastAPI-Admin'
     app_host: str = '0.0.0.0'
-    app_port: int = 8088
+    app_port: int = 8089
     app_debug: bool = True
     app_compress_algorithm: str = 'br'
     app_compress_br_level: int = 11

@@ -153,7 +153,7 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header REMOTE-HOST $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_pass http://127.0.0.1:8088/;
+        proxy_pass http://127.0.0.1:8080/;
     }
 
     location /prod-api {
@@ -161,7 +161,7 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header REMOTE-HOST $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_pass http://127.0.0.1:9099/;
+        proxy_pass http://127.0.0.1:9089/;
         rewrite ^/prod-api/(.*)$ /$1 break;
     }
 
@@ -208,7 +208,7 @@ python3 app.py --env=prod
 密码：admin123
 
 # 浏览器访问
-地址：http://127.0.0.1:8088
+地址：http://127.0.0.1:8089
 ```
 
 ## 交流与赞助

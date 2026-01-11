@@ -1,5 +1,6 @@
 from datetime import datetime
 from sqlalchemy import Column, DateTime, Integer, String
+from sqlalchemy.orm import relationship
 from config.database import Base
 
 
@@ -29,6 +30,9 @@ class SysUser(Base):
     update_by = Column(String(64), default='', comment='更新者')
     update_time = Column(DateTime, comment='更新时间', default=datetime.now())
     remark = Column(String(500), default=None, comment='备注')
+
+    # 关联关系
+    conversations = relationship('Conversation', back_populates='user', cascade='all, delete-orphan')
 
 
 class SysUserRole(Base):
