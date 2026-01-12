@@ -8,8 +8,8 @@ from utils.log_util import logger
 
 app = Dash(
     __name__,
-    compress=True,
-    suppress_callback_exceptions=True,
+    compress=False,
+    suppress_callback_exceptions=False,
     update_title=None,
     on_error=global_exception_handler,
 )

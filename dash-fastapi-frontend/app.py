@@ -2,6 +2,7 @@ import feffery_antd_components as fac
 import feffery_utils_components as fuc
 from dash import dcc, html
 from callbacks import app_c, router_c  # noqa: F401
+from callbacks.system_c import topic_category_c, spoken_topic_c  # noqa: F401
 from config.env import AppConfig
 from server import app
 from store.store import render_store_container

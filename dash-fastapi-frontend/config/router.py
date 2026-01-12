@@ -80,4 +80,46 @@ class RouterConfig:
                 }
             ],
         },
+        {
+            'path': 'topicCategory',
+            'component': 'Layout',
+            'name': 'TopicCategory',
+            'redirect': 'noredirect',
+            'meta': {
+                'title': '话题分类管理',
+                'icon': 'antd-book',
+            },
+            'children': [
+                {
+                    'path': 'list',
+                    'component': 'system.topic_category',
+                    'name': 'TopicCategoryList',
+                    'meta': {
+                        'title': '话题分类列表',
+                        'icon': 'antd-book',
+                    },
+                }
+            ],
+        },
+        {
+            'path': 'spokenTopic',
+            'component': 'Layout',
+            'name': 'SpokenTopic',
+            'redirect': 'noredirect',
+            'meta': {
+                'title': '话题管理',
+                'icon': 'antd-file-text',
+            },
+            'children': [
+                {
+                    'path': 'list',
+                    'component': 'system.spoken_topic',
+                    'name': 'SpokenTopicList',
+                    'meta': {
+                        'title': '话题列表',
+                        'icon': 'antd-file-text',
+                    },
+                }
+            ],
+        },
     ]

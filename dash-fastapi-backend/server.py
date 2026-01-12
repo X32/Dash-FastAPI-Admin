@@ -21,6 +21,7 @@ from module_admin.controller.online_controller import onlineController
 from module_admin.controller.post_controler import postController
 from module_admin.controller.role_controller import roleController
 from module_admin.controller.server_controller import serverController
+from module_admin.controller.topic_category_controller import topicCategoryController
 from module_admin.controller.user_controller import userController
 from sub_applications.handle import handle_sub_applications
 from utils.common_util import worship
@@ -77,6 +78,7 @@ controller_list = [
     {'router': serverController, 'tags': ['系统监控-菜单管理']},
     {'router': cacheController, 'tags': ['系统监控-缓存监控']},
     {'router': commonController, 'tags': ['通用模块']},
+    {'router': topicCategoryController, 'tags': ['系统管理-话题分类管理']},
 ]
 
 for controller in controller_list:

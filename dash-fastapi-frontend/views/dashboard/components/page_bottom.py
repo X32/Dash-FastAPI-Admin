@@ -278,9 +278,7 @@ def render_page_bottom():
                                                                             ),
                                                                         ),
                                                                     ],
-                                                                    key=item.get(
-                                                                        'id'
-                                                                    ),
+                                                                    id=f"activity-item-{item.get('id')}",
                                                                 ),
                                                                 html.Div(
                                                                     item.get(
