@@ -42,7 +42,7 @@ class ResponseUtil:
         if model_content is not None:
             result.update(model_content.model_dump())
 
-        result.update({'success': True, 'time': datetime.now()})
+        result.update({'success': True, 'time': datetime.now().isoformat()})
 
         return JSONResponse(status_code=status.HTTP_200_OK, content=jsonable_encoder(result))
 
@@ -76,7 +76,7 @@ class ResponseUtil:
         if model_content is not None:
             result.update(model_content.model_dump())
 
-        result.update({'success': False, 'time': datetime.now()})
+        result.update({'success': False, 'time': datetime.now().isoformat()})
 
         return JSONResponse(status_code=status.HTTP_200_OK, content=jsonable_encoder(result))
 
@@ -110,7 +110,7 @@ class ResponseUtil:
         if model_content is not None:
             result.update(model_content.model_dump())
 
-        result.update({'success': False, 'time': datetime.now()})
+        result.update({'success': False, 'time': datetime.now().isoformat()})
 
         return JSONResponse(status_code=status.HTTP_200_OK, content=jsonable_encoder(result))
 
@@ -144,7 +144,7 @@ class ResponseUtil:
         if model_content is not None:
             result.update(model_content.model_dump())
 
-        result.update({'success': False, 'time': datetime.now()})
+        result.update({'success': False, 'time': datetime.now().isoformat()})
 
         return JSONResponse(status_code=status.HTTP_200_OK, content=jsonable_encoder(result))
 
@@ -178,7 +178,7 @@ class ResponseUtil:
         if model_content is not None:
             result.update(model_content.model_dump())
 
-        result.update({'success': False, 'time': datetime.now()})
+        result.update({'success': False, 'time': datetime.now().isoformat()})
 
         return JSONResponse(status_code=status.HTTP_200_OK, content=jsonable_encoder(result))
 
