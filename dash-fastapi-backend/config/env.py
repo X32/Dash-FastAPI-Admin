@@ -16,7 +16,7 @@ class AppSettings(BaseSettings):
     app_name: str = 'Dash-FasAPI-Admin'
     app_root_path: str = '/dev-api'
     app_host: str = '0.0.0.0'
-    app_port: int = 9099
+    app_port: int = 9019
     app_version: str = '2.0.0'
     app_reload: bool = True
     app_ip_location_query: bool = True
@@ -175,14 +175,21 @@ class GetConfig:
         if 'uvicorn' in sys.argv[0]:
             # 使用uvicorn启动时，命令行参数需要按照uvicorn的文档进行配置，无法自定义参数
             pass
+        elif 'pytest' in sys.argv[0] or 'py.test' in sys.argv[0]:
+            # 使用pytest运行时，不解析命令行参数，使用默认环境
+            os.environ['APP_ENV'] = 'dev'
         else:
             # 使用argparse定义命令行参数
             parser = argparse.ArgumentParser(description='命令行参数')
             parser.add_argument('--env', type=str, default='', help='运行环境')
-            # 解析命令行参数
-            args = parser.parse_args()
-            # 设置环境变量，如果未设置命令行参数，默认APP_ENV为dev
-            os.environ['APP_ENV'] = args.env if args.env else 'dev'
+            try:
+                # 解析命令行参数
+                args = parser.parse_args()
+                # 设置环境变量，如果未设置命令行参数，默认APP_ENV为dev
+                os.environ['APP_ENV'] = args.env if args.env else 'dev'
+            except SystemExit:
+                # 如果解析失败（比如有不认识的参数），使用默认环境
+                os.environ['APP_ENV'] = 'dev'
         # 读取运行环境
         run_env = os.environ.get('APP_ENV', '')
         # 运行环境未指定时默认加载.env.dev
